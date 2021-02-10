@@ -9,7 +9,9 @@ const assets = [
   "/css/materialize.min.css",
   "/img/dish.png",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
-  //   "https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
+  "https://fonts.gstatic.com/s/materialicons/v77/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2	",
+  //   "/manifest.json",
+  "/img/icons/icon-144x144.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -29,4 +31,9 @@ self.addEventListener("activate", (event) => {
 //
 self.addEventListener("fetch", (event) => {
   //   console.log("fetch event", event);
+  event.respondWith(
+    caches.match(event.request).then((cacheRes) => {
+      return cacheRes || fetch(event.request);
+    })
+  );
 });
