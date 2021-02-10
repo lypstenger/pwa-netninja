@@ -13,6 +13,7 @@ const assets = [
   "https://fonts.gstatic.com/s/materialicons/v77/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2	",
   //   "/manifest.json",
   "/img/icons/icon-144x144.png",
+  "/pages/fallback.html",
 ];
 
 self.addEventListener("install", (event) => {
@@ -32,7 +33,7 @@ self.addEventListener("activate", (event) => {
       //   console.log(keys);
       return Promise.all(
         keys
-          .filter((key) => key !== staticCacheName)
+          .filter((key) => key !== staticCacheName && key !== dynamicCache)
           .map((key) => caches.delete(key))
       );
     })
@@ -43,16 +44,19 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   //   console.log("fetch event", event);
   event.respondWith(
-    caches.match(event.request).then((cacheRes) => {
-      return (
-        cacheRes ||
-        fetch(event.request).then((fetchRes) => {
-          return caches.open(dynamicCache).then((cache) => {
-            cache.put(event.request.url, fetchRes.clone());
-            return fetchRes;
-          });
-        })
-      );
-    })
+    caches
+      .match(event.request)
+      .then((cacheRes) => {
+        return (
+          cacheRes ||
+          fetch(event.request).then((fetchRes) => {
+            return caches.open(dynamicCache).then((cache) => {
+              cache.put(event.request.url, fetchRes.clone());
+              return fetchRes;
+            });
+          })
+        );
+      })
+      .catch(() => caches.match("/pages/fallback.html"))
   );
 });
