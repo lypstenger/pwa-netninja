@@ -12,9 +12,19 @@ const assets = [
   "https://fonts.googleapis.com/icon?family=Material+Icons",
   "https://fonts.gstatic.com/s/materialicons/v77/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2	",
   //   "/manifest.json",
-  "/img/icons/icon-144x144.png",
+  //   "/img/icons/icon-144x144.png",
   "/pages/fallback.html",
 ];
+
+const limitCacheSize = (name, size) => {
+  caches.open(name).then((cache) => {
+    cache.keys().then((keys) => {
+      if (keys.length > size) {
+        cache.delete(keys[0]).then(limitCacheSize(name, size));
+      }
+    });
+  });
+};
 
 self.addEventListener("install", (event) => {
   //   console.log("service worker installed");
@@ -52,6 +62,7 @@ self.addEventListener("fetch", (event) => {
           fetch(event.request).then((fetchRes) => {
             return caches.open(dynamicCache).then((cache) => {
               cache.put(event.request.url, fetchRes.clone());
+              limitCacheSize(dynamicCache, 15);
               return fetchRes;
             });
           })
