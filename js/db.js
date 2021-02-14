@@ -1,3 +1,16 @@
+// offline data
+db.enablePersistence().catch((err) => {
+  if (err.code == "failed-precondition") {
+    // prob multiple tabs open
+    console.log("persistance failed");
+  } else if (err.code == "unimplemented") {
+    // lack of browser support
+    console.log("persistance is not available");
+  } else {
+    console.log(err);
+  }
+});
+
 // real-time listener
 db.collection("recipes").onSnapshot((snapshot) => {
   //   console.log(snapshot.docChanges());
