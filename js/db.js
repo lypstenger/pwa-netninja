@@ -21,6 +21,7 @@ db.collection("recipes").onSnapshot((snapshot) => {
       renderRecipe(change.d_.doc.data(), change.d_.doc.id);
     }
     if (change.d_.type === "removed") {
+      removeRecipe(change.d_.doc.id);
     }
   });
 });
@@ -40,4 +41,13 @@ form.addEventListener("submit", (evt) => {
 
   form.title.value = "";
   form.ingredients.value = "";
+});
+
+const recipeContainer = document.querySelector(".recipes");
+recipeContainer.addEventListener("click", (evt) => {
+  //   console.log(evt);
+  if (evt.target.tagName === "I") {
+    const id = evt.target.getAttribute("data-id");
+    db.collection("recipes").doc(id).delete();
+  }
 });
