@@ -4,3 +4,5 @@ if ('serviceWorker' in navigator) {
     .then((reg) => console.log(reg, 'service worker registered'))
     .catch((err) => console.log(err, 'service worker not registered'))
 }
+
+
